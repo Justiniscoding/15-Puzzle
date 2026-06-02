@@ -27,6 +27,8 @@
 
 		tileSize = canvas.width / 4;
 
+		shuffleGrid();
+
 		loop();
 	});
 
@@ -67,7 +69,20 @@
 		requestAnimationFrame(loop);
 	}
 
-	function swapTiles(event: MouseEvent) {
+	function swapTileWithBlank(tileX: number, tileY: number) {
+		const tileIndex = tileY * tilesPerRow + tileX;
+		const blankIndex = blankTileY * tilesPerRow + blankTileX;
+
+		blankTileX = tileX;
+		blankTileY = tileY;
+
+		const temp = gameGrid[tileIndex];
+
+		gameGrid[tileIndex] = gameGrid[blankIndex];
+		gameGrid[blankIndex] = temp;
+	}
+
+	function swapTilesOnClick(event: MouseEvent) {
 		// TODO: use getBoundingClientRect to get the offset of the canvas
 		// relative to the DOM (or a more effecient method) in the future.
 
@@ -82,20 +97,34 @@
 				tileX + xOffsets[i] == blankTileX &&
 				tileY + yOffsets[i] == blankTileY
 			) {
-				const tileIndex = tileY * tilesPerRow + tileX;
-				const blankIndex = blankTileY * tilesPerRow + blankTileX;
-
-				blankTileX = tileX;
-				blankTileY = tileY;
-
-				const temp = gameGrid[tileIndex];
-
-				gameGrid[tileIndex] = gameGrid[blankIndex];
-				gameGrid[blankIndex] = temp;
+				swapTileWithBlank(tileX, tileY);
 				return;
 			}
 		}
 	}
+
+	function shuffleGrid() {
+		let xOffsets = [1, -1, 0, 0];
+		let yOffsets = [0, 0, 1, -1];
+
+		for (let i = 0; i < 1000; i++) {
+			const offsetIndex = Math.floor(Math.random() * 4);
+
+			const tileX = blankTileX + xOffsets[offsetIndex];
+			const tileY = blankTileY + yOffsets[offsetIndex];
+
+			if (
+				tileX < 0 ||
+				tileY < 0 ||
+				tileX == tilesPerRow ||
+				tileY == tilesPerRow
+			) {
+				continue;
+			}
+
+			swapTileWithBlank(tileX, tileY);
+		}
+	}
 </script>
 
-<canvas bind:this={canvas} onclick={swapTiles}></canvas>
+<canvas bind:this={canvas} onclick={swapTilesOnClick}></canvas>
