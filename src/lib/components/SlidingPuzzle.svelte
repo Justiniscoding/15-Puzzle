@@ -150,6 +150,8 @@
 
 		let queue: QueueElement[] = [];
 
+		let explored = new Set<string>();
+
 		queue.push({
 			grid: gameGrid,
 			blankPosition: { x: blankTileX, y: blankTileY },
@@ -200,24 +202,30 @@
 				newElement.grid[tileIndex] = newElement.grid[blankIndex];
 				newElement.grid[blankIndex] = temp;
 
-				newElement.moves.push({ x: gridX, y: gridY });
+				const gridAsString = newElement.grid.join("");
 
-				if (isSolved(newElement.grid)) {
-					for (let i = 0; i < newElement.moves.length; i++) {
-						setTimeout(() => {
-							swapTileWithBlank(
-								newElement.moves[i].x,
-								newElement.moves[i].y,
-							);
-						}, i * 100);
+				if (!explored.has(gridAsString)) {
+					explored.add(gridAsString);
+
+					newElement.moves.push({ x: gridX, y: gridY });
+
+					if (isSolved(newElement.grid)) {
+						for (let i = 0; i < newElement.moves.length; i++) {
+							setTimeout(() => {
+								swapTileWithBlank(
+									newElement.moves[i].x,
+									newElement.moves[i].y,
+								);
+							}, i * 100);
+						}
+
+						queue.length = 0;
+
+						break;
 					}
 
-					queue.length = 0;
-
-					break;
+					queue.push(newElement);
 				}
-
-				queue.push(newElement);
 			}
 		}
 	}
