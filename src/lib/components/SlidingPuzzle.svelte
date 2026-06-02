@@ -101,6 +101,11 @@
 			) {
 				swapTileWithBlank(tileX, tileY);
 				movesDone++;
+
+				if (isSolved(gameGrid)) {
+					alert("You won!");
+				}
+
 				return;
 			}
 		}
@@ -125,10 +130,24 @@
 				continue;
 			}
 
-			// await new Promise((resolve) => setTimeout(resolve, 1));
+			await new Promise((resolve) => setTimeout(resolve, 10));
 
 			swapTileWithBlank(tileX, tileY);
 		}
+	}
+
+	function isSolved(gameGrid: number[]) {
+		if (gameGrid[gameGrid.length - 1] != -1) {
+			return false;
+		}
+
+		for (let i = 1; i < gameGrid.length - 1; i++) {
+			if (gameGrid[i - 1] > gameGrid[i]) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 </script>
 
