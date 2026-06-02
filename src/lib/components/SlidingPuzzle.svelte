@@ -9,6 +9,9 @@
 	const numTiles = 16;
 	const tilesPerRow = Math.sqrt(numTiles);
 
+	let blankTileX = tilesPerRow - 1;
+	let blankTileY = tilesPerRow - 1;
+
 	let gameGrid: number[] = new Array(numTiles).fill(null).map((el, index) => {
 		if (index == numTiles - 1) {
 			return -1;
@@ -22,7 +25,7 @@
 		canvas.width = Math.min(innerWidth, innerHeight);
 		canvas.height = Math.min(innerWidth, innerHeight);
 
-		tileSize = innerWidth / 4;
+		tileSize = canvas.width / 4;
 
 		loop();
 	});
@@ -63,6 +66,25 @@
 
 		requestAnimationFrame(loop);
 	}
+
+	function swapTiles(event: MouseEvent) {
+		// TODO: use getBoundingClientRect to get the offset of the canvas
+		// relative to the DOM (or a more effecient method) in the future.
+
+		const tileX = Math.floor(event.x / tileSize);
+		const tileY = Math.floor(event.y / tileSize);
+
+		const tileIndex = tileY * tilesPerRow + tileX;
+		const blankIndex = blankTileY * tilesPerRow + blankTileX;
+
+		blankTileX = tileX;
+		blankTileY = tileY;
+
+		const temp = gameGrid[tileIndex];
+
+		gameGrid[tileIndex] = gameGrid[blankIndex];
+		gameGrid[blankIndex] = temp;
+	}
 </script>
 
-<canvas bind:this={canvas}></canvas>
+<canvas bind:this={canvas} onclick={swapTiles}></canvas>
