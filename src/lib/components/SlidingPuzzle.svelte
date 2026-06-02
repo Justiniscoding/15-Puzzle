@@ -6,11 +6,13 @@
 
 	let tileSize: number;
 
-	const numTiles = 16;
-	const tilesPerRow = Math.sqrt(numTiles);
+	const tilesPerRow = 4;
+	const numTiles = Math.pow(tilesPerRow, 2);
 
 	let blankTileX = tilesPerRow - 1;
 	let blankTileY = tilesPerRow - 1;
+
+	let movesDone = $state(0);
 
 	let gameGrid: number[] = new Array(numTiles).fill(null).map((el, index) => {
 		if (index == numTiles - 1) {
@@ -22,10 +24,10 @@
 	onMount(() => {
 		context = canvas.getContext("2d");
 
-		canvas.width = Math.min(innerWidth, innerHeight);
-		canvas.height = Math.min(innerWidth, innerHeight);
+		canvas.width = Math.min(innerWidth, innerHeight) - 200;
+		canvas.height = Math.min(innerWidth, innerHeight) - 200;
 
-		tileSize = canvas.width / 4;
+		tileSize = canvas.width / tilesPerRow;
 
 		shuffleGrid();
 
@@ -98,16 +100,17 @@
 				tileY + yOffsets[i] == blankTileY
 			) {
 				swapTileWithBlank(tileX, tileY);
+				movesDone++;
 				return;
 			}
 		}
 	}
 
-	function shuffleGrid() {
+	async function shuffleGrid() {
 		let xOffsets = [1, -1, 0, 0];
 		let yOffsets = [0, 0, 1, -1];
 
-		for (let i = 0; i < 1000; i++) {
+		for (let i = 0; i < Math.pow(numTiles, 2); i++) {
 			const offsetIndex = Math.floor(Math.random() * 4);
 
 			const tileX = blankTileX + xOffsets[offsetIndex];
@@ -122,9 +125,13 @@
 				continue;
 			}
 
+			// await new Promise((resolve) => setTimeout(resolve, 1));
+
 			swapTileWithBlank(tileX, tileY);
 		}
 	}
 </script>
 
 <canvas bind:this={canvas} onclick={swapTilesOnClick}></canvas>
+
+<h2>Moves: {movesDone}</h2>
