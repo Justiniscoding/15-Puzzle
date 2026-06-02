@@ -9,9 +9,9 @@
 	const numTiles = 16;
 	const tilesPerRow = Math.sqrt(numTiles);
 
-	let gameGrid = new Array(numTiles).fill(null).map((el, index) => {
+	let gameGrid: number[] = new Array(numTiles).fill(null).map((el, index) => {
 		if (index == numTiles - 1) {
-			return null;
+			return -1;
 		}
 		return index + 1;
 	});
@@ -36,11 +36,17 @@
 		context.fillRect(0, 0, canvas.width, canvas.height);
 
 		for (let i = 0; i < gameGrid.length; i++) {
-			let x = (i % tilesPerRow) * tileSize;
-			let y = Math.floor(i / tilesPerRow) * tileSize;
+			if (gameGrid[i] == -1) {
+				continue;
+			}
 
-			context.fillStyle = "red";
-			context.fillRect(x, y, x + tileSize, y + tileSize);
+			const x = (i % tilesPerRow) * tileSize;
+			const y = Math.floor(i / tilesPerRow) * tileSize;
+
+			const hue = (360 / (numTiles - 1)) * (gameGrid[i] - 1);
+
+			context.fillStyle = `hsl(${hue}, 50%, 50%)`;
+			context.fillRect(x, y, tileSize, tileSize);
 		}
 
 		requestAnimationFrame(loop);
