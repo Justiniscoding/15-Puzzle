@@ -6,7 +6,7 @@
 
 	let tileSize: number;
 
-	const tilesPerRow = 4;
+	const tilesPerRow = 3;
 	const numTiles = Math.pow(tilesPerRow, 2);
 
 	let blankTileX = tilesPerRow - 1;
@@ -136,6 +136,92 @@
 		}
 	}
 
+	function solve() {
+		type Coord = {
+			x: number;
+			y: number;
+		};
+
+		type QueueElement = {
+			grid: number[];
+			blankPosition: Coord;
+			moves: Coord[];
+		};
+
+		let queue: QueueElement[] = [];
+
+		queue.push({
+			grid: gameGrid,
+			blankPosition: { x: blankTileX, y: blankTileY },
+			moves: [],
+		});
+
+		console.log(gameGrid);
+
+		const offsetX = [0, 0, -1, 1];
+		const offsetY = [1, -1, 0, 0];
+
+		while (queue.length != 0) {
+			let element = queue.shift();
+
+			if (element == undefined) {
+				continue;
+			}
+
+			for (let i = 0; i < 4; i++) {
+				const gridX = element.blankPosition.x + offsetX[i];
+				const gridY = element.blankPosition.y + offsetY[i];
+
+				if (
+					gridX < 0 ||
+					gridY < 0 ||
+					gridX == tilesPerRow ||
+					gridY == tilesPerRow
+				) {
+					continue;
+				}
+
+				let newElement: QueueElement = {
+					grid: element.grid.slice(),
+					blankPosition: { x: 0, y: 0 },
+					moves: element.moves.slice(),
+				};
+
+				const tileIndex = gridY * tilesPerRow + gridX;
+				const blankIndex =
+					element.blankPosition.y * tilesPerRow +
+					element.blankPosition.x;
+
+				newElement.blankPosition.x = gridX;
+				newElement.blankPosition.y = gridY;
+
+				const temp = newElement.grid[tileIndex];
+
+				newElement.grid[tileIndex] = newElement.grid[blankIndex];
+				newElement.grid[blankIndex] = temp;
+
+				newElement.moves.push({ x: gridX, y: gridY });
+
+				if (isSolved(newElement.grid)) {
+					for (let i = 0; i < newElement.moves.length; i++) {
+						setTimeout(() => {
+							swapTileWithBlank(
+								newElement.moves[i].x,
+								newElement.moves[i].y,
+							);
+						}, i * 100);
+					}
+
+					queue.length = 0;
+
+					break;
+				}
+
+				queue.push(newElement);
+			}
+		}
+	}
+
 	function isSolved(gameGrid: number[]) {
 		if (gameGrid[gameGrid.length - 1] != -1) {
 			return false;
@@ -154,3 +240,4 @@
 <canvas bind:this={canvas} onclick={swapTilesOnClick}></canvas>
 
 <h2>Moves: {movesDone}</h2>
+<button onclick={solve}>Solve</button>
