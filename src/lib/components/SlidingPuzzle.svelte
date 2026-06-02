@@ -115,7 +115,7 @@
 		let xOffsets = [1, -1, 0, 0];
 		let yOffsets = [0, 0, 1, -1];
 
-		for (let i = 0; i < Math.pow(numTiles, 2); i++) {
+		for (let i = 0; i < Math.pow(numTiles, 3); i++) {
 			const offsetIndex = Math.floor(Math.random() * 4);
 
 			const tileX = blankTileX + xOffsets[offsetIndex];
@@ -130,13 +130,17 @@
 				continue;
 			}
 
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await new Promise((resolve) => setTimeout(resolve, 2));
 
 			swapTileWithBlank(tileX, tileY);
 		}
 	}
 
 	function solve() {
+		if (isSolved(gameGrid)) {
+			return;
+		}
+
 		type Coord = {
 			x: number;
 			y: number;
@@ -158,8 +162,6 @@
 			moves: [],
 		});
 
-		console.log(gameGrid);
-
 		const offsetX = [0, 0, -1, 1];
 		const offsetY = [1, -1, 0, 0];
 
@@ -169,6 +171,10 @@
 			if (element == undefined) {
 				continue;
 			}
+
+			console.log(
+				`Solver: the queue has ${queue.length} elements at a depth of ${element.moves.length} moves.`,
+			);
 
 			for (let i = 0; i < 4; i++) {
 				const gridX = element.blankPosition.x + offsetX[i];
@@ -212,11 +218,12 @@
 					if (isSolved(newElement.grid)) {
 						for (let i = 0; i < newElement.moves.length; i++) {
 							setTimeout(() => {
+								movesDone++;
 								swapTileWithBlank(
 									newElement.moves[i].x,
 									newElement.moves[i].y,
 								);
-							}, i * 100);
+							}, i * 300);
 						}
 
 						queue.length = 0;
