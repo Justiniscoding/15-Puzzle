@@ -47,6 +47,18 @@
 
 			context.fillStyle = `hsl(${hue}, 50%, 50%)`;
 			context.fillRect(x, y, tileSize, tileSize);
+
+			context.font = "50px Arial";
+			context.textBaseline = "middle";
+			context.textAlign = "center";
+
+			context.fillStyle = "black";
+
+			context.fillText(
+				gameGrid[i].toString(),
+				x + tileSize / 2,
+				y + tileSize / 2,
+			);
 		}
 
 		requestAnimationFrame(loop);
