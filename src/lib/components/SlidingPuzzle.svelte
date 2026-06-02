@@ -74,16 +74,27 @@
 		const tileX = Math.floor(event.x / tileSize);
 		const tileY = Math.floor(event.y / tileSize);
 
-		const tileIndex = tileY * tilesPerRow + tileX;
-		const blankIndex = blankTileY * tilesPerRow + blankTileX;
+		let xOffsets = [1, -1, 0, 0];
+		let yOffsets = [0, 0, 1, -1];
 
-		blankTileX = tileX;
-		blankTileY = tileY;
+		for (let i = 0; i < 4; i++) {
+			if (
+				tileX + xOffsets[i] == blankTileX &&
+				tileY + yOffsets[i] == blankTileY
+			) {
+				const tileIndex = tileY * tilesPerRow + tileX;
+				const blankIndex = blankTileY * tilesPerRow + blankTileX;
 
-		const temp = gameGrid[tileIndex];
+				blankTileX = tileX;
+				blankTileY = tileY;
 
-		gameGrid[tileIndex] = gameGrid[blankIndex];
-		gameGrid[blankIndex] = temp;
+				const temp = gameGrid[tileIndex];
+
+				gameGrid[tileIndex] = gameGrid[blankIndex];
+				gameGrid[blankIndex] = temp;
+				return;
+			}
+		}
 	}
 </script>
 
