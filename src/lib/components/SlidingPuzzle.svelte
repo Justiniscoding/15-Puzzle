@@ -22,8 +22,8 @@
 	});
 
 	const imagePath = "fun image.png";
-	const imageSize = 2312;
-	const imageTileSize = imageSize / tilesPerRow;
+	let imageSize: number;
+	let imageTileSize: number;
 
 	let image: HTMLImageElement;
 
@@ -42,7 +42,11 @@
 		image = new Image();
 		image.src = imagePath;
 
-		image.onload = loop;
+		image.onload = () => {
+			imageSize = Math.min(image.width, image.height);
+			imageTileSize = imageSize / tilesPerRow;
+			loop();
+		};
 	});
 
 	function loop() {
