@@ -6,7 +6,7 @@
 
 	let tileSize: number;
 
-	const tilesPerRow = 4;
+	const tilesPerRow = 10;
 	const numTiles = Math.pow(tilesPerRow, 2);
 
 	let blankTileX = tilesPerRow - 1;
@@ -26,6 +26,11 @@
 	let imageTileSize: number;
 
 	let image: HTMLImageElement;
+
+	type Coord = {
+		x: number;
+		y: number;
+	};
 
 	onMount(() => {
 		context = canvas.getContext("2d") ?? new CanvasRenderingContext2D();
@@ -64,34 +69,34 @@
 			const imageX = (gameGrid[i] - 1) % tilesPerRow;
 			const imageY = Math.floor((gameGrid[i] - 1) / tilesPerRow);
 
-			context.drawImage(
-				image,
-				imageX * imageTileSize,
-				imageY * imageTileSize,
-				imageTileSize,
-				imageTileSize,
-				x,
-				y,
-				tileSize,
-				tileSize,
-			);
-
-			// const hue = (360 / (numTiles - 1)) * (gameGrid[i] - 1);
-			//
-			// context.fillStyle = `hsl(${hue}, 50%, 50%)`;
-			// context.fillRect(x, y, tileSize, tileSize);
-			//
-			// context.font = "50px Arial";
-			// context.textBaseline = "middle";
-			// context.textAlign = "center";
-			//
-			// context.fillStyle = "black";
-			//
-			// context.fillText(
-			// 	gameGrid[i].toString(),
-			// 	x + tileSize / 2,
-			// 	y + tileSize / 2,
+			// context.drawImage(
+			// 	image,
+			// 	imageX * imageTileSize,
+			// 	imageY * imageTileSize,
+			// 	imageTileSize,
+			// 	imageTileSize,
+			// 	x,
+			// 	y,
+			// 	tileSize,
+			// 	tileSize,
 			// );
+
+			const hue = (360 / (numTiles - 1)) * (gameGrid[i] - 1);
+
+			context.fillStyle = `hsl(${hue}, 50%, 50%)`;
+			context.fillRect(x, y, tileSize, tileSize);
+
+			context.font = "50px Arial";
+			context.textBaseline = "middle";
+			context.textAlign = "center";
+
+			context.fillStyle = "black";
+
+			context.fillText(
+				gameGrid[i].toString(),
+				x + tileSize / 2,
+				y + tileSize / 2,
+			);
 		}
 
 		requestAnimationFrame(loop);
@@ -199,11 +204,6 @@
 			return;
 		}
 
-		type Coord = {
-			x: number;
-			y: number;
-		};
-
 		type QueueElement = {
 			grid: number[];
 			blankPosition: Coord;
@@ -299,6 +299,127 @@
 		}
 	}
 
+	async function algorithmicSolve() {
+		let moves: Coord[] = [];
+
+		let currentTarget = 1;
+
+		let targetCurrentPosition: Coord = { x: -1, y: -1 };
+
+		for (let i = 0; i < gameGrid.length; i++) {
+			if (gameGrid[i] == currentTarget) {
+				targetCurrentPosition = {
+					x: i % tilesPerRow,
+					y: Math.floor(i / tilesPerRow),
+				};
+			}
+		}
+
+		// Bring the blank position to the target
+		const manhattanDistance =
+			Math.abs(targetCurrentPosition.x - blankTileX) +
+			Math.abs(targetCurrentPosition.y - blankTileY);
+
+		for (let i = 0; i < manhattanDistance - 1; i++) {
+			if (targetCurrentPosition.x != blankTileX) {
+				moves.push({
+					x:
+						Math.sign(targetCurrentPosition.x - blankTileX) +
+						blankTileX,
+					y: blankTileY,
+				});
+
+				swapTileWithBlank(moves[i].x, moves[i].y);
+			} else {
+				moves.push({
+					x: blankTileX,
+					y:
+						Math.sign(targetCurrentPosition.y - blankTileY) +
+						blankTileY,
+				});
+
+				swapTileWithBlank(moves[i].x, moves[i].y);
+			}
+
+			await new Promise((resolve) => setTimeout(resolve, 300));
+		}
+
+		// Bring the target to its position
+		let targetHomePosition: Coord = { x: 0, y: 0 };
+
+		if (
+			Math.abs(blankTileX - targetHomePosition.x) <
+				Math.abs(targetHomePosition.x - targetCurrentPosition.x) ||
+			Math.abs(blankTileY - targetHomePosition.y) <
+				Math.abs(targetHomePosition.y - targetCurrentPosition.y)
+		) {
+			const oldBlankX = blankTileX;
+			const oldBlankY = blankTileY;
+
+			swapTileWithBlank(targetCurrentPosition.x, targetCurrentPosition.y);
+
+			targetCurrentPosition.x = oldBlankX;
+			targetCurrentPosition.y = oldBlankY;
+
+			await new Promise((resolve) => setTimeout(resolve, 3000));
+		}
+
+		while (
+			targetCurrentPosition.x != targetHomePosition.x ||
+			targetCurrentPosition.y != targetHomePosition.y
+		) {
+			if (targetCurrentPosition.y != targetHomePosition.y) {
+				let xDirection = 1;
+
+				if (targetCurrentPosition.x == tilesPerRow - 1) {
+					xDirection = -1;
+				}
+
+				let xOffsets: number[] = [xDirection, 0, 0, -xDirection, 0];
+				let yOffsets: number[] = [0, -1, -1, 0, 1];
+
+				for (let i = 0; i < xOffsets.length; i++) {
+					swapTileWithBlank(
+						blankTileX + xOffsets[i],
+						blankTileY + yOffsets[i],
+					);
+
+					await new Promise((resolve) => setTimeout(resolve, 100));
+				}
+
+				targetCurrentPosition.y--;
+
+				console.log(
+					`The target is currently at (${targetCurrentPosition.x}, ${targetCurrentPosition.y})`,
+				);
+			} else {
+				let yDirection = 1;
+
+				if (targetCurrentPosition.y == tilesPerRow - 1) {
+					yDirection = -1;
+				}
+
+				let xOffsets: number[] = [-1, 0, 1, 0, -1];
+				let yOffsets: number[] = [0, -1, 0, 1, 0];
+
+				for (let i = 0; i < xOffsets.length; i++) {
+					swapTileWithBlank(
+						blankTileX + xOffsets[i],
+						blankTileY + yOffsets[i],
+					);
+
+					await new Promise((resolve) => setTimeout(resolve, 100));
+				}
+
+				targetCurrentPosition.x--;
+
+				console.log(
+					`The target is currently at (${targetCurrentPosition.x}, ${targetCurrentPosition.y})`,
+				);
+			}
+		}
+	}
+
 	function isSolved(gameGrid: number[]) {
 		if (gameGrid[gameGrid.length - 1] != -1) {
 			return false;
@@ -318,3 +439,4 @@
 
 <h2>Moves: {movesDone}</h2>
 <button onclick={solve}>Solve</button>
+<button onclick={algorithmicSolve}>Algorithmic Solve (not optimal)</button>
