@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 
 	let canvas: HTMLCanvasElement;
-	let context: CanvasRenderingContext2D | null;
+	let context: CanvasRenderingContext2D;
 
 	let tileSize: number;
 
@@ -21,8 +21,14 @@
 		return index + 1;
 	});
 
+	const imagePath = "fun image.png";
+	const imageSize = 2312;
+	const imageTileSize = imageSize / tilesPerRow;
+
+	let image: HTMLImageElement;
+
 	onMount(() => {
-		context = canvas.getContext("2d");
+		context = canvas.getContext("2d") ?? new CanvasRenderingContext2D();
 
 		canvas.width = Math.min(innerWidth, innerHeight) - 200;
 		canvas.height = Math.min(innerWidth, innerHeight) - 200;
@@ -33,14 +39,13 @@
 
 		shuffleGrid();
 
-		loop();
+		image = new Image();
+		image.src = imagePath;
+
+		image.onload = loop;
 	});
 
 	function loop() {
-		if (context == null) {
-			return;
-		}
-
 		context.fillStyle = "black";
 		context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -52,22 +57,37 @@
 			const x = (i % tilesPerRow) * tileSize;
 			const y = Math.floor(i / tilesPerRow) * tileSize;
 
-			const hue = (360 / (numTiles - 1)) * (gameGrid[i] - 1);
+			const imageX = (gameGrid[i] - 1) % tilesPerRow;
+			const imageY = Math.floor((gameGrid[i] - 1) / tilesPerRow);
 
-			context.fillStyle = `hsl(${hue}, 50%, 50%)`;
-			context.fillRect(x, y, tileSize, tileSize);
-
-			context.font = "50px Arial";
-			context.textBaseline = "middle";
-			context.textAlign = "center";
-
-			context.fillStyle = "black";
-
-			context.fillText(
-				gameGrid[i].toString(),
-				x + tileSize / 2,
-				y + tileSize / 2,
+			context.drawImage(
+				image,
+				imageX * imageTileSize,
+				imageY * imageTileSize,
+				imageTileSize,
+				imageTileSize,
+				x,
+				y,
+				tileSize,
+				tileSize,
 			);
+
+			// const hue = (360 / (numTiles - 1)) * (gameGrid[i] - 1);
+			//
+			// context.fillStyle = `hsl(${hue}, 50%, 50%)`;
+			// context.fillRect(x, y, tileSize, tileSize);
+			//
+			// context.font = "50px Arial";
+			// context.textBaseline = "middle";
+			// context.textAlign = "center";
+			//
+			// context.fillStyle = "black";
+			//
+			// context.fillText(
+			// 	gameGrid[i].toString(),
+			// 	x + tileSize / 2,
+			// 	y + tileSize / 2,
+			// );
 		}
 
 		requestAnimationFrame(loop);
