@@ -21,7 +21,7 @@
 		return index + 1;
 	});
 
-	const imagePath = "fun image.png";
+	const imagePath = "";
 	let imageSize: number;
 	let imageTileSize: number;
 
@@ -44,14 +44,18 @@
 
 		shuffleGrid();
 
-		image = new Image();
-		image.src = imagePath;
-
-		image.onload = () => {
-			imageSize = Math.min(image.width, image.height);
-			imageTileSize = imageSize / tilesPerRow;
+		if (imagePath === "") {
 			loop();
-		};
+		} else {
+			image = new Image();
+			image.src = imagePath;
+
+			image.onload = () => {
+				imageSize = Math.min(image.width, image.height);
+				imageTileSize = imageSize / tilesPerRow;
+				loop();
+			};
+		}
 	});
 
 	function loop() {
@@ -69,34 +73,36 @@
 			const imageX = (gameGrid[i] - 1) % tilesPerRow;
 			const imageY = Math.floor((gameGrid[i] - 1) / tilesPerRow);
 
-			// context.drawImage(
-			// 	image,
-			// 	imageX * imageTileSize,
-			// 	imageY * imageTileSize,
-			// 	imageTileSize,
-			// 	imageTileSize,
-			// 	x,
-			// 	y,
-			// 	tileSize,
-			// 	tileSize,
-			// );
+			if (imagePath == "") {
+				const hue = (360 / (numTiles - 1)) * (gameGrid[i] - 1);
 
-			const hue = (360 / (numTiles - 1)) * (gameGrid[i] - 1);
+				context.fillStyle = `hsl(${hue}, 50%, 50%)`;
+				context.fillRect(x, y, tileSize, tileSize);
 
-			context.fillStyle = `hsl(${hue}, 50%, 50%)`;
-			context.fillRect(x, y, tileSize, tileSize);
+				context.font = "50px Arial";
+				context.textBaseline = "middle";
+				context.textAlign = "center";
 
-			context.font = "50px Arial";
-			context.textBaseline = "middle";
-			context.textAlign = "center";
+				context.fillStyle = "black";
 
-			context.fillStyle = "black";
-
-			context.fillText(
-				gameGrid[i].toString(),
-				x + tileSize / 2,
-				y + tileSize / 2,
-			);
+				context.fillText(
+					gameGrid[i].toString(),
+					x + tileSize / 2,
+					y + tileSize / 2,
+				);
+			} else {
+				context.drawImage(
+					image,
+					imageX * imageTileSize,
+					imageY * imageTileSize,
+					imageTileSize,
+					imageTileSize,
+					x,
+					y,
+					tileSize,
+					tileSize,
+				);
+			}
 		}
 
 		requestAnimationFrame(loop);
@@ -300,10 +306,14 @@
 	}
 
 	async function algorithmicSolve() {
-		for (let targetCell = 0; targetCell < 9; targetCell++) {
+		for (let targetCell = 0; targetCell < 12; targetCell++) {
 			let currentTarget = targetCell + 1;
 
 			let targetCurrentPosition: Coord = { x: -1, y: -1 };
+			let targetHomePosition: Coord = {
+				x: targetCell % tilesPerRow,
+				y: Math.floor(targetCell / tilesPerRow),
+			};
 
 			for (let i = 0; i < gameGrid.length; i++) {
 				if (gameGrid[i] == currentTarget) {
@@ -312,6 +322,13 @@
 						y: Math.floor(i / tilesPerRow),
 					};
 				}
+			}
+
+			if (
+				targetCurrentPosition.x == targetHomePosition.x &&
+				targetCurrentPosition.y == targetHomePosition.y
+			) {
+				continue;
 			}
 
 			// Bring the blank position to the target
@@ -326,20 +343,20 @@
 							blankTileX,
 						blankTileY,
 					);
+					movesDone++;
 				} else {
 					swapTileWithBlank(
 						blankTileX,
 						Math.sign(targetCurrentPosition.y - blankTileY) +
 							blankTileY,
 					);
+					movesDone++;
 				}
 
 				await new Promise((resolve) => setTimeout(resolve, 300));
 			}
 
-			// Bring the target to its position
-			let targetHomePosition: Coord = { x: targetCell, y: 0 };
-
+			// Swap target with blank if it brings the target closer to its home position
 			if (
 				Math.abs(blankTileX - targetHomePosition.x) <
 					Math.abs(targetHomePosition.x - targetCurrentPosition.x) ||
@@ -353,6 +370,7 @@
 					targetCurrentPosition.x,
 					targetCurrentPosition.y,
 				);
+				movesDone++;
 
 				targetCurrentPosition.x = oldBlankX;
 				targetCurrentPosition.y = oldBlankY;
@@ -360,6 +378,7 @@
 				await new Promise((resolve) => setTimeout(resolve, 1000));
 			}
 
+			// Bring the target to its position
 			while (
 				targetCurrentPosition.x != targetHomePosition.x ||
 				targetCurrentPosition.y != targetHomePosition.y
@@ -374,6 +393,7 @@
 							blankTileY + yOffsets[i],
 						);
 
+						movesDone++;
 						await new Promise((resolve) =>
 							setTimeout(resolve, 100),
 						);
@@ -399,6 +419,7 @@
 							blankTileX + xOffsets[i],
 							blankTileY + yOffsets[i],
 						);
+						movesDone++;
 
 						await new Promise((resolve) =>
 							setTimeout(resolve, 100),
@@ -419,6 +440,7 @@
 							blankTileX + xOffsets[i],
 							blankTileY + yOffsets[i],
 						);
+						movesDone++;
 
 						await new Promise((resolve) =>
 							setTimeout(resolve, 100),
