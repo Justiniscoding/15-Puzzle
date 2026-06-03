@@ -6,7 +6,7 @@
 
 	let tileSize: number;
 
-	const tilesPerRow = 3;
+	const tilesPerRow = 4;
 	const numTiles = Math.pow(tilesPerRow, 2);
 
 	let blankTileX = tilesPerRow - 1;
@@ -14,7 +14,7 @@
 
 	let movesDone = $state(0);
 
-	let gameGrid: number[] = new Array(numTiles).fill(null).map((el, index) => {
+	let gameGrid: number[] = new Array(numTiles).fill(null).map((_, index) => {
 		if (index == numTiles - 1) {
 			return -1;
 		}
@@ -28,6 +28,8 @@
 		canvas.height = Math.min(innerWidth, innerHeight) - 200;
 
 		tileSize = canvas.width / tilesPerRow;
+
+		window.addEventListener("keydown", swapTilesWithKeyboard);
 
 		shuffleGrid();
 
@@ -111,6 +113,37 @@
 		}
 	}
 
+	function swapTilesWithKeyboard(event: KeyboardEvent) {
+		let xOffset = 0;
+		let yOffset = 0;
+
+		if (event.key == "ArrowLeft") {
+			xOffset = 1;
+		} else if (event.key == "ArrowRight") {
+			xOffset = -1;
+		} else if (event.key == "ArrowUp") {
+			yOffset = 1;
+		} else if (event.key == "ArrowDown") {
+			yOffset = -1;
+		}
+
+		if (xOffset != 0 || yOffset != 0) {
+			const tileX = blankTileX + xOffset;
+			const tileY = blankTileY + yOffset;
+
+			if (
+				tileX < 0 ||
+				tileY < 0 ||
+				tileX == tilesPerRow ||
+				tileY == tilesPerRow
+			) {
+				return;
+			}
+
+			swapTileWithBlank(tileX, tileY);
+		}
+	}
+
 	async function shuffleGrid() {
 		let xOffsets = [1, -1, 0, 0];
 		let yOffsets = [0, 0, 1, -1];
@@ -130,7 +163,7 @@
 				continue;
 			}
 
-			await new Promise((resolve) => setTimeout(resolve, 2));
+			// await new Promise((resolve) => setTimeout(resolve, 2));
 
 			swapTileWithBlank(tileX, tileY);
 		}
@@ -216,6 +249,10 @@
 					newElement.moves.push({ x: gridX, y: gridY });
 
 					if (isSolved(newElement.grid)) {
+						console.log(
+							`Solver: Found a ${newElement.moves.length} move solution.`,
+						);
+
 						for (let i = 0; i < newElement.moves.length; i++) {
 							setTimeout(() => {
 								movesDone++;
