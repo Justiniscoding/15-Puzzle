@@ -300,122 +300,137 @@
 	}
 
 	async function algorithmicSolve() {
-		let moves: Coord[] = [];
+		for (let targetCell = 0; targetCell < 9; targetCell++) {
+			let currentTarget = targetCell + 1;
 
-		let currentTarget = 1;
+			let targetCurrentPosition: Coord = { x: -1, y: -1 };
 
-		let targetCurrentPosition: Coord = { x: -1, y: -1 };
-
-		for (let i = 0; i < gameGrid.length; i++) {
-			if (gameGrid[i] == currentTarget) {
-				targetCurrentPosition = {
-					x: i % tilesPerRow,
-					y: Math.floor(i / tilesPerRow),
-				};
+			for (let i = 0; i < gameGrid.length; i++) {
+				if (gameGrid[i] == currentTarget) {
+					targetCurrentPosition = {
+						x: i % tilesPerRow,
+						y: Math.floor(i / tilesPerRow),
+					};
+				}
 			}
-		}
 
-		// Bring the blank position to the target
-		const manhattanDistance =
-			Math.abs(targetCurrentPosition.x - blankTileX) +
-			Math.abs(targetCurrentPosition.y - blankTileY);
+			// Bring the blank position to the target
+			const manhattanDistance =
+				Math.abs(targetCurrentPosition.x - blankTileX) +
+				Math.abs(targetCurrentPosition.y - blankTileY);
 
-		for (let i = 0; i < manhattanDistance - 1; i++) {
-			if (targetCurrentPosition.x != blankTileX) {
-				moves.push({
-					x:
+			for (let i = 0; i < manhattanDistance - 1; i++) {
+				if (targetCurrentPosition.x != blankTileX) {
+					swapTileWithBlank(
 						Math.sign(targetCurrentPosition.x - blankTileX) +
-						blankTileX,
-					y: blankTileY,
-				});
-
-				swapTileWithBlank(moves[i].x, moves[i].y);
-			} else {
-				moves.push({
-					x: blankTileX,
-					y:
-						Math.sign(targetCurrentPosition.y - blankTileY) +
+							blankTileX,
 						blankTileY,
-				});
+					);
+				} else {
+					swapTileWithBlank(
+						blankTileX,
+						Math.sign(targetCurrentPosition.y - blankTileY) +
+							blankTileY,
+					);
+				}
 
-				swapTileWithBlank(moves[i].x, moves[i].y);
+				await new Promise((resolve) => setTimeout(resolve, 300));
 			}
 
-			await new Promise((resolve) => setTimeout(resolve, 300));
-		}
+			// Bring the target to its position
+			let targetHomePosition: Coord = { x: targetCell, y: 0 };
 
-		// Bring the target to its position
-		let targetHomePosition: Coord = { x: 0, y: 0 };
+			if (
+				Math.abs(blankTileX - targetHomePosition.x) <
+					Math.abs(targetHomePosition.x - targetCurrentPosition.x) ||
+				Math.abs(blankTileY - targetHomePosition.y) <
+					Math.abs(targetHomePosition.y - targetCurrentPosition.y)
+			) {
+				const oldBlankX = blankTileX;
+				const oldBlankY = blankTileY;
 
-		if (
-			Math.abs(blankTileX - targetHomePosition.x) <
-				Math.abs(targetHomePosition.x - targetCurrentPosition.x) ||
-			Math.abs(blankTileY - targetHomePosition.y) <
-				Math.abs(targetHomePosition.y - targetCurrentPosition.y)
-		) {
-			const oldBlankX = blankTileX;
-			const oldBlankY = blankTileY;
-
-			swapTileWithBlank(targetCurrentPosition.x, targetCurrentPosition.y);
-
-			targetCurrentPosition.x = oldBlankX;
-			targetCurrentPosition.y = oldBlankY;
-
-			await new Promise((resolve) => setTimeout(resolve, 3000));
-		}
-
-		while (
-			targetCurrentPosition.x != targetHomePosition.x ||
-			targetCurrentPosition.y != targetHomePosition.y
-		) {
-			if (targetCurrentPosition.y != targetHomePosition.y) {
-				let xDirection = 1;
-
-				if (targetCurrentPosition.x == tilesPerRow - 1) {
-					xDirection = -1;
-				}
-
-				let xOffsets: number[] = [xDirection, 0, 0, -xDirection, 0];
-				let yOffsets: number[] = [0, -1, -1, 0, 1];
-
-				for (let i = 0; i < xOffsets.length; i++) {
-					swapTileWithBlank(
-						blankTileX + xOffsets[i],
-						blankTileY + yOffsets[i],
-					);
-
-					await new Promise((resolve) => setTimeout(resolve, 100));
-				}
-
-				targetCurrentPosition.y--;
-
-				console.log(
-					`The target is currently at (${targetCurrentPosition.x}, ${targetCurrentPosition.y})`,
+				swapTileWithBlank(
+					targetCurrentPosition.x,
+					targetCurrentPosition.y,
 				);
-			} else {
-				let yDirection = 1;
 
-				if (targetCurrentPosition.y == tilesPerRow - 1) {
-					yDirection = -1;
-				}
+				targetCurrentPosition.x = oldBlankX;
+				targetCurrentPosition.y = oldBlankY;
 
-				let xOffsets: number[] = [-1, 0, 1, 0, -1];
-				let yOffsets: number[] = [0, -1, 0, 1, 0];
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+			}
 
-				for (let i = 0; i < xOffsets.length; i++) {
-					swapTileWithBlank(
-						blankTileX + xOffsets[i],
-						blankTileY + yOffsets[i],
+			while (
+				targetCurrentPosition.x != targetHomePosition.x ||
+				targetCurrentPosition.y != targetHomePosition.y
+			) {
+				if (targetCurrentPosition.x < targetHomePosition.x) {
+					let xOffsets: number[] = [1, 0, -1, 0, 1];
+					let yOffsets: number[] = [0, -1, 0, 1, 0];
+
+					for (let i = 0; i < xOffsets.length; i++) {
+						swapTileWithBlank(
+							blankTileX + xOffsets[i],
+							blankTileY + yOffsets[i],
+						);
+
+						await new Promise((resolve) =>
+							setTimeout(resolve, 100),
+						);
+					}
+
+					targetCurrentPosition.x++;
+
+					console.log(
+						`The target is currently at (${targetCurrentPosition.x}, ${targetCurrentPosition.y})`,
 					);
+				} else if (targetCurrentPosition.y != targetHomePosition.y) {
+					let xDirection = 1;
 
-					await new Promise((resolve) => setTimeout(resolve, 100));
+					if (targetCurrentPosition.x == tilesPerRow - 1) {
+						xDirection = -1;
+					}
+
+					let xOffsets: number[] = [xDirection, 0, 0, -xDirection, 0];
+					let yOffsets: number[] = [0, -1, -1, 0, 1];
+
+					for (let i = 0; i < xOffsets.length; i++) {
+						swapTileWithBlank(
+							blankTileX + xOffsets[i],
+							blankTileY + yOffsets[i],
+						);
+
+						await new Promise((resolve) =>
+							setTimeout(resolve, 100),
+						);
+					}
+
+					targetCurrentPosition.y--;
+
+					console.log(
+						`The target is currently at (${targetCurrentPosition.x}, ${targetCurrentPosition.y})`,
+					);
+				} else {
+					let xOffsets: number[] = [-1, 0, 1, 0, -1];
+					let yOffsets: number[] = [0, -1, 0, 1, 0];
+
+					for (let i = 0; i < xOffsets.length; i++) {
+						swapTileWithBlank(
+							blankTileX + xOffsets[i],
+							blankTileY + yOffsets[i],
+						);
+
+						await new Promise((resolve) =>
+							setTimeout(resolve, 100),
+						);
+					}
+
+					targetCurrentPosition.x--;
+
+					console.log(
+						`The target is currently at (${targetCurrentPosition.x}, ${targetCurrentPosition.y})`,
+					);
 				}
-
-				targetCurrentPosition.x--;
-
-				console.log(
-					`The target is currently at (${targetCurrentPosition.x}, ${targetCurrentPosition.y})`,
-				);
 			}
 		}
 	}
