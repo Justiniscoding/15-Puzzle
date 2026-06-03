@@ -140,6 +140,7 @@
 				return;
 			}
 
+			movesDone++;
 			swapTileWithBlank(tileX, tileY);
 		}
 	}
