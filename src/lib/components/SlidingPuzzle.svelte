@@ -213,6 +213,7 @@
 		type QueueElement = {
 			grid: number[];
 			blankPosition: Coord;
+			lastMove: number;
 			moves: Coord[];
 		};
 
@@ -223,11 +224,12 @@
 		queue.push({
 			grid: gameGrid,
 			blankPosition: { x: blankTileX, y: blankTileY },
+			lastMove: -1,
 			moves: [],
 		});
 
-		const offsetX = [0, 0, -1, 1];
-		const offsetY = [1, -1, 0, 0];
+		const offsetX = [0, -1, 0, 1];
+		const offsetY = [1, 0, -1, 0];
 
 		while (queue.length != 0) {
 			let element = queue.shift();
@@ -244,6 +246,10 @@
 				const gridX = element.blankPosition.x + offsetX[i];
 				const gridY = element.blankPosition.y + offsetY[i];
 
+				if (element.lastMove == (i + 2) % 4) {
+					continue;
+				}
+
 				if (
 					gridX < 0 ||
 					gridY < 0 ||
@@ -256,6 +262,7 @@
 				let newElement: QueueElement = {
 					grid: element.grid.slice(),
 					blankPosition: { x: 0, y: 0 },
+					lastMove: i,
 					moves: element.moves.slice(),
 				};
 
