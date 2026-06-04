@@ -6,7 +6,7 @@
 
 	let tileSize: number;
 
-	const tilesPerRow = 3;
+	const tilesPerRow = 10;
 	const numTiles = Math.pow(tilesPerRow, 2);
 
 	let blankTileX = tilesPerRow - 1;
@@ -292,13 +292,13 @@
 						);
 
 						for (let i = 0; i < newElement.moves.length; i++) {
-							// setTimeout(() => {
-							movesDone++;
-							swapTileWithBlank(
-								newElement.moves[i].x,
-								newElement.moves[i].y,
-							);
-							// }, i * 300);
+							setTimeout(() => {
+								movesDone++;
+								swapTileWithBlank(
+									newElement.moves[i].x,
+									newElement.moves[i].y,
+								);
+							}, i * 300);
 						}
 
 						queue.length = 0;
@@ -313,14 +313,25 @@
 	}
 
 	async function algorithmicSolve() {
-		for (let targetCell = 0; targetCell < 12; targetCell++) {
+		for (let targetCell = 0; targetCell < 10; targetCell++) {
 			let currentTarget = targetCell + 1;
+
+			if (currentTarget % tilesPerRow == tilesPerRow - 1) {
+				currentTarget++;
+			} else if (currentTarget % tilesPerRow == 0) {
+				currentTarget--;
+			}
 
 			let targetCurrentPosition: Coord = { x: -1, y: -1 };
 			let targetHomePosition: Coord = {
 				x: targetCell % tilesPerRow,
 				y: Math.floor(targetCell / tilesPerRow),
 			};
+
+			if (currentTarget % tilesPerRow == tilesPerRow - 1) {
+				targetHomePosition.x--;
+				targetHomePosition.y++;
+			}
 
 			for (let i = 0; i < gameGrid.length; i++) {
 				if (gameGrid[i] == currentTarget) {
@@ -457,6 +468,21 @@
 					}
 
 					targetCurrentPosition.x--;
+				}
+			}
+
+			if (currentTarget % tilesPerRow == tilesPerRow - 1) {
+				let xOffsets: number[] = [1, 0, 0, -1, 0];
+				let yOffsets: number[] = [0, -1, -1, 0, 1];
+
+				for (let i = 0; i < xOffsets.length; i++) {
+					swapTileWithBlank(
+						blankTileX + xOffsets[i],
+						blankTileY + yOffsets[i],
+					);
+					movesDone++;
+
+					await new Promise((resolve) => setTimeout(resolve, 100));
 				}
 			}
 		}
