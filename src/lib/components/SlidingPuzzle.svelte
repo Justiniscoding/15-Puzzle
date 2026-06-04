@@ -6,7 +6,7 @@
 
 	let tileSize: number;
 
-	const tilesPerRow = 10;
+	const tilesPerRow = 3;
 	const numTiles = Math.pow(tilesPerRow, 2);
 
 	let blankTileX = tilesPerRow - 1;
@@ -236,9 +236,9 @@
 				continue;
 			}
 
-			console.log(
-				`Solver: the queue has ${queue.length} elements at a depth of ${element.moves.length} moves.`,
-			);
+			// console.log(
+			// 	`Solver: the queue has ${queue.length} elements at a depth of ${element.moves.length} moves.`,
+			// );
 
 			for (let i = 0; i < 4; i++) {
 				const gridX = element.blankPosition.x + offsetX[i];
@@ -285,13 +285,13 @@
 						);
 
 						for (let i = 0; i < newElement.moves.length; i++) {
-							setTimeout(() => {
-								movesDone++;
-								swapTileWithBlank(
-									newElement.moves[i].x,
-									newElement.moves[i].y,
-								);
-							}, i * 300);
+							// setTimeout(() => {
+							movesDone++;
+							swapTileWithBlank(
+								newElement.moves[i].x,
+								newElement.moves[i].y,
+							);
+							// }, i * 300);
 						}
 
 						queue.length = 0;
@@ -383,6 +383,7 @@
 				targetCurrentPosition.x != targetHomePosition.x ||
 				targetCurrentPosition.y != targetHomePosition.y
 			) {
+				// Move target to the right until it is aligned with home
 				if (targetCurrentPosition.x < targetHomePosition.x) {
 					let xOffsets: number[] = [1, 0, -1, 0, 1];
 					let yOffsets: number[] = [0, -1, 0, 1, 0];
@@ -400,11 +401,8 @@
 					}
 
 					targetCurrentPosition.x++;
-
-					console.log(
-						`The target is currently at (${targetCurrentPosition.x}, ${targetCurrentPosition.y})`,
-					);
 				} else if (targetCurrentPosition.y != targetHomePosition.y) {
+					// Move target up until it is aligned with home
 					let xDirection = 1;
 
 					if (targetCurrentPosition.x == tilesPerRow - 1) {
@@ -414,7 +412,14 @@
 					let xOffsets: number[] = [xDirection, 0, 0, -xDirection, 0];
 					let yOffsets: number[] = [0, -1, -1, 0, 1];
 
+					const isXAligned = blankTileX == targetCurrentPosition.x;
+
 					for (let i = 0; i < xOffsets.length; i++) {
+						// Skip first two movements if blank is to the left/right of target current position.
+						if (!isXAligned && i < 2) {
+							continue;
+						}
+
 						swapTileWithBlank(
 							blankTileX + xOffsets[i],
 							blankTileY + yOffsets[i],
@@ -427,11 +432,8 @@
 					}
 
 					targetCurrentPosition.y--;
-
-					console.log(
-						`The target is currently at (${targetCurrentPosition.x}, ${targetCurrentPosition.y})`,
-					);
 				} else {
+					// Move target to the left until it is aligned with home
 					let xOffsets: number[] = [-1, 0, 1, 0, -1];
 					let yOffsets: number[] = [0, -1, 0, 1, 0];
 
@@ -448,10 +450,6 @@
 					}
 
 					targetCurrentPosition.x--;
-
-					console.log(
-						`The target is currently at (${targetCurrentPosition.x}, ${targetCurrentPosition.y})`,
-					);
 				}
 			}
 		}
@@ -470,6 +468,27 @@
 
 		return true;
 	}
+
+	function testSpeed() {
+		const startTime = Date.now();
+
+		for (let i = 0; i < 500; i++) {
+			shuffleGrid();
+			solve();
+		}
+
+		const endTime = Date.now();
+
+		const timeTaken = endTime - startTime;
+		const secondsTaken = Math.floor(timeTaken / 1000);
+		let millisecondsTaken = (timeTaken % 1000).toString();
+
+		while (millisecondsTaken.length != 3) {
+			millisecondsTaken = "0" + millisecondsTaken;
+		}
+
+		console.log(`It took ${secondsTaken}:${millisecondsTaken} seconds`);
+	}
 </script>
 
 <canvas bind:this={canvas} onclick={swapTilesOnClick}></canvas>
@@ -477,3 +496,4 @@
 <h2>Moves: {movesDone}</h2>
 <button onclick={solve}>Solve</button>
 <button onclick={algorithmicSolve}>Algorithmic Solve (not optimal)</button>
+<button onclick={testSpeed}>Performance test</button>
