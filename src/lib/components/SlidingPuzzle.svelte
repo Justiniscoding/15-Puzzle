@@ -6,7 +6,7 @@
 
 	let tileSize: number;
 
-	const tilesPerRow = 10;
+	const tilesPerRow = 7;
 	const numTiles = Math.pow(tilesPerRow, 2);
 
 	let blankTileX = tilesPerRow - 1;
@@ -313,7 +313,11 @@
 	}
 
 	async function algorithmicSolve() {
-		for (let targetCell = 0; targetCell < 10; targetCell++) {
+		for (
+			let targetCell = 0;
+			targetCell < tilesPerRow * tilesPerRow - tilesPerRow * 2;
+			targetCell++
+		) {
 			let currentTarget = targetCell + 1;
 
 			if (currentTarget % tilesPerRow == tilesPerRow - 1) {
@@ -406,7 +410,21 @@
 					let xOffsets: number[] = [1, 0, -1, 0, 1];
 					let yOffsets: number[] = [0, -1, 0, 1, 0];
 
+					const isXAligned = blankTileX == targetCurrentPosition.x;
+
 					for (let i = 0; i < xOffsets.length; i++) {
+						if (!isXAligned && i == 0) {
+							// Add new moves to set up for the swapping.
+							swapTileWithBlank(blankTileX, blankTileY + 1);
+							await new Promise((resolve) =>
+								setTimeout(resolve, 300),
+							);
+							swapTileWithBlank(blankTileX + 1, blankTileY);
+							await new Promise((resolve) =>
+								setTimeout(resolve, 300),
+							);
+						}
+
 						swapTileWithBlank(
 							blankTileX + xOffsets[i],
 							blankTileY + yOffsets[i],
@@ -455,7 +473,21 @@
 					let xOffsets: number[] = [-1, 0, 1, 0, -1];
 					let yOffsets: number[] = [0, -1, 0, 1, 0];
 
+					const isXAligned = blankTileX == targetCurrentPosition.x;
+
 					for (let i = 0; i < xOffsets.length; i++) {
+						if (!isXAligned && i == 0) {
+							// Add new moves to set up for the swapping.
+							swapTileWithBlank(blankTileX, blankTileY + 1);
+							await new Promise((resolve) =>
+								setTimeout(resolve, 300),
+							);
+							swapTileWithBlank(blankTileX - 1, blankTileY);
+							await new Promise((resolve) =>
+								setTimeout(resolve, 300),
+							);
+						}
+
 						swapTileWithBlank(
 							blankTileX + xOffsets[i],
 							blankTileY + yOffsets[i],
