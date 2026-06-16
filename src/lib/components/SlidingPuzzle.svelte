@@ -6,7 +6,7 @@
 
 	let tileSize: number;
 
-	const tilesPerRow = 7;
+	const tilesPerRow = 4;
 	const numTiles = Math.pow(tilesPerRow, 2);
 
 	let blankTileX = tilesPerRow - 1;
@@ -27,6 +27,9 @@
 
 	let image: HTMLImageElement;
 
+	let startTime = -1;
+	let finishedTime = -1;
+
 	type Coord = {
 		x: number;
 		y: number;
@@ -36,7 +39,7 @@
 		context = canvas.getContext("2d") ?? new CanvasRenderingContext2D();
 
 		canvas.width = Math.min(innerWidth, innerHeight) - 200;
-		canvas.height = Math.min(innerWidth, innerHeight) - 200;
+		canvas.height = Math.min(innerWidth, innerHeight) - 200 + 70;
 
 		tileSize = canvas.width / tilesPerRow;
 
@@ -62,6 +65,9 @@
 		context.fillStyle = "black";
 		context.fillRect(0, 0, canvas.width, canvas.height);
 
+		context.fillStyle = "#222";
+		context.fillRect(0, 0, canvas.width, canvas.width);
+
 		for (let i = 0; i < gameGrid.length; i++) {
 			if (gameGrid[i] == -1) {
 				continue;
@@ -76,8 +82,16 @@
 			if (imagePath == "") {
 				const hue = (360 / (numTiles - 1)) * (gameGrid[i] - 1);
 
+				let offset = 0;
+
 				context.fillStyle = `hsl(${hue}, 50%, 50%)`;
-				context.fillRect(x, y, tileSize, tileSize);
+
+				context.fillRect(
+					x + offset,
+					y + offset,
+					tileSize - offset * 2,
+					tileSize - offset * 2,
+				);
 
 				context.font = "50px Arial";
 				context.textBaseline = "middle";
@@ -105,6 +119,48 @@
 			}
 		}
 
+		context.fillStyle = "white";
+
+		context.textBaseline = "bottom";
+		context.textAlign = "left";
+
+		const textY = canvas.height - 10;
+
+		context.fillText(`Moves: ${movesDone}`, 0, textY);
+
+		if (startTime != -1) {
+			const timeDifference =
+				(finishedTime == -1 ? Date.now() : finishedTime) - startTime;
+
+			const minutes = Math.floor(timeDifference / (1000 * 60));
+			const seconds = Math.floor(
+				(timeDifference - minutes * 1000 * 60) / 1000,
+			).toString();
+			const milliseconds = (timeDifference - minutes * 1000 * 60) % 1000;
+
+			let timeString = "";
+
+			if (minutes != 0) {
+				timeString += minutes + ":";
+			}
+
+			if (seconds.length == 1 && minutes != 0) {
+				timeString += "0";
+			}
+
+			timeString += seconds + "." + milliseconds;
+
+			context.textAlign = "center";
+			context.fillText(`Time: ${timeString}`, canvas.width / 2, textY);
+
+			let movesPerSecond = (movesDone / (timeDifference / 1000)).toFixed(
+				1,
+			);
+
+			context.textAlign = "right";
+			context.fillText(`MPS: ${movesPerSecond}`, canvas.width, textY);
+		}
+
 		requestAnimationFrame(loop);
 	}
 
@@ -122,6 +178,10 @@
 	}
 
 	function swapTilesOnClick(event: MouseEvent) {
+		if (startTime == -1) {
+			startTime = Date.now();
+		}
+
 		// TODO: use getBoundingClientRect to get the offset of the canvas
 		// relative to the DOM (or a more effecient method) in the future.
 
@@ -140,7 +200,7 @@
 				movesDone++;
 
 				if (isSolved(gameGrid)) {
-					alert("You won!");
+					finishedTime = Date.now();
 				}
 
 				return;
@@ -375,7 +435,7 @@
 					movesDone++;
 				}
 
-				await new Promise((resolve) => setTimeout(resolve, 300));
+				// await new Promise((resolve) => setTimeout(resolve, 300));
 			}
 
 			// Swap target with blank if it brings the target closer to its home position
@@ -397,7 +457,7 @@
 				targetCurrentPosition.x = oldBlankX;
 				targetCurrentPosition.y = oldBlankY;
 
-				await new Promise((resolve) => setTimeout(resolve, 1000));
+				// await new Promise((resolve) => setTimeout(resolve, 1000));
 			}
 
 			// Bring the target to its position
@@ -416,13 +476,13 @@
 						if (!isXAligned && i == 0) {
 							// Add new moves to set up for the swapping.
 							swapTileWithBlank(blankTileX, blankTileY + 1);
-							await new Promise((resolve) =>
-								setTimeout(resolve, 300),
-							);
+							// await new Promise((resolve) =>
+							// 	setTimeout(resolve, 300),
+							// );
 							swapTileWithBlank(blankTileX + 1, blankTileY);
-							await new Promise((resolve) =>
-								setTimeout(resolve, 300),
-							);
+							// await new Promise((resolve) =>
+							// 	setTimeout(resolve, 300),
+							// );
 						}
 
 						swapTileWithBlank(
@@ -431,9 +491,9 @@
 						);
 
 						movesDone++;
-						await new Promise((resolve) =>
-							setTimeout(resolve, 100),
-						);
+						// await new Promise((resolve) =>
+						// 	setTimeout(resolve, 100),
+						// );
 					}
 
 					targetCurrentPosition.x++;
@@ -462,9 +522,9 @@
 						);
 						movesDone++;
 
-						await new Promise((resolve) =>
-							setTimeout(resolve, 100),
-						);
+						// await new Promise((resolve) =>
+						// 	setTimeout(resolve, 100),
+						// );
 					}
 
 					targetCurrentPosition.y--;
@@ -479,13 +539,13 @@
 						if (!isXAligned && i == 0) {
 							// Add new moves to set up for the swapping.
 							swapTileWithBlank(blankTileX, blankTileY + 1);
-							await new Promise((resolve) =>
-								setTimeout(resolve, 300),
-							);
+							// await new Promise((resolve) =>
+							// 	setTimeout(resolve, 300),
+							// );
 							swapTileWithBlank(blankTileX - 1, blankTileY);
-							await new Promise((resolve) =>
-								setTimeout(resolve, 300),
-							);
+							// await new Promise((resolve) =>
+							// 	setTimeout(resolve, 300),
+							// );
 						}
 
 						swapTileWithBlank(
@@ -494,9 +554,9 @@
 						);
 						movesDone++;
 
-						await new Promise((resolve) =>
-							setTimeout(resolve, 100),
-						);
+						// await new Promise((resolve) =>
+						// 	setTimeout(resolve, 100),
+						// );
 					}
 
 					targetCurrentPosition.x--;
@@ -514,7 +574,7 @@
 					);
 					movesDone++;
 
-					await new Promise((resolve) => setTimeout(resolve, 100));
+					// await new Promise((resolve) => setTimeout(resolve, 100));
 				}
 			}
 		}
@@ -558,7 +618,14 @@
 
 <canvas bind:this={canvas} onclick={swapTilesOnClick}></canvas>
 
-<h2>Moves: {movesDone}</h2>
-<button onclick={solve}>Solve</button>
-<button onclick={algorithmicSolve}>Algorithmic Solve (not optimal)</button>
-<button onclick={testSpeed}>Performance test</button>
+<!-- <h2>Moves: {movesDone}</h2> -->
+<!-- <button onclick={solve}>Solve</button> -->
+<!-- <button onclick={algorithmicSolve}>Algorithmic Solve (not optimal)</button> -->
+<!-- <button onclick={testSpeed}>Performance test</button> -->
+
+<style>
+	canvas {
+		border: 5px solid black;
+		border-radius: 4px;
+	}
+</style>
