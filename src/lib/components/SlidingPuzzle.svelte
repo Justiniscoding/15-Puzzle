@@ -182,11 +182,11 @@
 			startTime = Date.now();
 		}
 
-		// TODO: use getBoundingClientRect to get the offset of the canvas
-		// relative to the DOM (or a more effecient method) in the future.
+		// TODO: Find a more effecient way to do this so that it isn't recalculated every click.
+		const canvasOffset = canvas.getBoundingClientRect();
 
-		const tileX = Math.floor(event.x / tileSize);
-		const tileY = Math.floor(event.y / tileSize);
+		const tileX = Math.floor((event.x - canvasOffset.left) / tileSize);
+		const tileY = Math.floor((event.y - canvasOffset.top) / tileSize);
 
 		let xOffsets = [1, -1, 0, 0];
 		let yOffsets = [0, 0, 1, -1];
