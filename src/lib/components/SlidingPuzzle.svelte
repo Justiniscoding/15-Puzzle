@@ -124,7 +124,7 @@
 		context.textBaseline = "bottom";
 		context.textAlign = "left";
 
-		const textY = canvas.height - 10;
+		const textY = canvas.height - 7.5;
 
 		context.fillText(`Moves: ${movesDone}`, 0, textY);
 
@@ -223,6 +223,10 @@
 		}
 
 		if (xOffset != 0 || yOffset != 0) {
+			if (startTime == -1) {
+				startTime = Date.now();
+			}
+
 			const tileX = blankTileX + xOffset;
 			const tileY = blankTileY + yOffset;
 
@@ -237,6 +241,10 @@
 
 			movesDone++;
 			swapTileWithBlank(tileX, tileY);
+
+			if (isSolved(gameGrid)) {
+				finishedTime = Date.now();
+			}
 		}
 	}
 
@@ -594,6 +602,13 @@
 		return true;
 	}
 
+	function resetGame() {
+		shuffleGrid();
+		movesDone = 0;
+		startTime = -1;
+		finishedTime = -1;
+	}
+
 	function testSpeed() {
 		const startTime = Date.now();
 
@@ -622,6 +637,7 @@
 <!-- <button onclick={solve}>Solve</button> -->
 <!-- <button onclick={algorithmicSolve}>Algorithmic Solve (not optimal)</button> -->
 <!-- <button onclick={testSpeed}>Performance test</button> -->
+<button onclick={resetGame}>Restart</button>
 
 <style>
 	canvas {
