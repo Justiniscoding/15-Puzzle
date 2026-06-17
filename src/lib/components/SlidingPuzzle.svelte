@@ -178,10 +178,6 @@
 	}
 
 	function swapTilesOnClick(event: MouseEvent) {
-		if (startTime == -1) {
-			startTime = Date.now();
-		}
-
 		// TODO: Find a more effecient way to do this so that it isn't recalculated every click.
 		const canvasOffset = canvas.getBoundingClientRect();
 
@@ -196,6 +192,10 @@
 				tileX + xOffsets[i] == blankTileX &&
 				tileY + yOffsets[i] == blankTileY
 			) {
+				if (startTime == -1) {
+					startTime = Date.now();
+				}
+
 				swapTileWithBlank(tileX, tileY);
 				movesDone++;
 
