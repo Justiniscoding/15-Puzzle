@@ -15,6 +15,11 @@
 		justify-content: center;
 	}
 
+	h1 {
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: 3vw;
+	}
+
 	:global(html, body) {
 		background-color: #aaa;
 	}

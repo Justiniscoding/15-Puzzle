@@ -6,7 +6,7 @@
 
 	let tileSize: number;
 
-	const tilesPerRow = 4;
+	let tilesPerRow = 4;
 	const numTiles = Math.pow(tilesPerRow, 2);
 
 	let blankTileX = tilesPerRow - 1;
@@ -643,5 +643,15 @@
 	canvas {
 		border: 5px solid black;
 		border-radius: 4px;
+	}
+
+	button {
+		padding: 1vw 1.5vw;
+		border: 2px solid black;
+		border-radius: 0.5vw;
+		margin-top: 2vh;
+		font-size: 2vw;
+		background-color: #1e90ff;
+		cursor: pointer;
 	}
 </style>
