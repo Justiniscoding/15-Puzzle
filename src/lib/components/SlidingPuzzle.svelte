@@ -12,8 +12,7 @@
 
 	let tilesPerRow = $state(4);
 
-	// let numTiles: number, blankTileX: number, blankTileY: number;
-	let blankTileY: number, blankTileX: number;
+	let blankTileX: number, blankTileY: number;
 
 	let movesDone = $state(0);
 
