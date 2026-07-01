@@ -9,19 +9,12 @@
 	let tileSize: number;
 
 	let tilesPerRow = 4;
-	const numTiles = Math.pow(tilesPerRow, 2);
 
-	let blankTileX = tilesPerRow - 1;
-	let blankTileY = tilesPerRow - 1;
+	let numTiles: number, blankTileX: number, blankTileY: number;
 
 	let movesDone = $state(0);
 
-	let gameGrid: number[] = new Array(numTiles).fill(null).map((_, index) => {
-		if (index == numTiles - 1) {
-			return -1;
-		}
-		return index + 1;
-	});
+	let gameGrid: number[];
 
 	const imagePath = "";
 	let imageSize: number;
@@ -37,13 +30,35 @@
 		y: number;
 	};
 
+	function initializeGrid() {
+		numTiles = Math.pow(tilesPerRow, 2);
+
+		blankTileX = tilesPerRow - 1;
+		blankTileY = tilesPerRow - 1;
+
+		movesDone = 0;
+
+		if (gameGrid) {
+			gameGrid.length = 0;
+		}
+
+		gameGrid = new Array(numTiles).fill(null).map((_, index) => {
+			if (index == numTiles - 1) {
+				return -1;
+			}
+			return index + 1;
+		});
+
+		tileSize = canvas.width / tilesPerRow;
+	}
+
 	onMount(() => {
 		context = canvas.getContext("2d") ?? new CanvasRenderingContext2D();
 
 		canvas.width = (innerHeight / 3) * 2.1;
 		canvas.height = (innerHeight / 3) * 2.1 + 70;
 
-		tileSize = canvas.width / tilesPerRow;
+		initializeGrid();
 
 		window.addEventListener("keydown", swapTilesWithKeyboard);
 
