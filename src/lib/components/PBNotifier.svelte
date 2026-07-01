@@ -36,14 +36,16 @@
 	}
 </script>
 
-<div class="container">
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="container" onclick={() => onFinished(index)}>
 	<h1>New PB!</h1>
 	<p>
 		<span class="red">{formatNumber(oldTime)}s</span>
 		→
 		<span class="green">{formatNumber(newTime)}s</span>
 	</p>
-	<p>{oldTime - newTime} seconds faster</p>
+	<p>{formatNumber(oldTime - newTime)}s faster</p>
 	<progress value={progressAmount} max={animationTime}></progress>
 </div>
 
@@ -55,15 +57,16 @@
 		flex-direction: column;
 
 		background-color: black;
-		border: 10px solid #39ff14;
+		border: 7px solid #39ff14;
 		border-radius: 3vw;
 
 		width: 40vw;
-		height: 20vh;
+
+		padding: 1vw 2vw;
 
 		position: absolute;
 
-		bottom: 5vh;
+		top: 2vh;
 		left: 50vw;
 
 		transform: translate(-50%, 0);
@@ -71,20 +74,21 @@
 
 	h1 {
 		font-family: Arial, Helvetica, sans-serif;
-		color: white;
 	}
 
-	p {
+	p,
+	h1 {
 		color: white;
+		margin: 0.2vh;
 	}
 
 	.red {
-		color: red;
+		color: #ff0000;
 		font-weight: bold;
 	}
 
 	.green {
-		color: green;
+		color: #39ff14;
 		font-weight: bold;
 	}
 </style>

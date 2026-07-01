@@ -30,8 +30,3 @@
 </script>
 
 <div class="container" bind:this={container}></div>
-
-<!-- <PBNotifier oldTime={3} newTime={2} onFinished={() => true}></PBNotifier> -->
-
-<style>
-</style>
