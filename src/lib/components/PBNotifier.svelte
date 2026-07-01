@@ -4,7 +4,7 @@
 
 	let { oldTime, newTime, onFinished, index } = $props();
 
-	let visible = $state(true);
+	let visible = $state(false);
 
 	const animationTime = 8000;
 
@@ -13,6 +13,7 @@
 	let lastFrame: number;
 
 	onMount(() => {
+		visible = true;
 		loop();
 	});
 
@@ -59,7 +60,7 @@
 			→
 			<span class="green">{formatNumber(newTime)}s</span>
 		</p>
-		<p>{formatNumber(oldTime - newTime)}s faster</p>
+		<p>{formatNumber(oldTime - newTime)}s faster!</p>
 		<progress value={progressAmount} max={animationTime}></progress>
 	</div>
 {/if}
@@ -105,5 +106,9 @@
 	.green {
 		color: #39ff14;
 		font-weight: bold;
+	}
+
+	progress {
+		accent-color: #1e90ff;
 	}
 </style>
