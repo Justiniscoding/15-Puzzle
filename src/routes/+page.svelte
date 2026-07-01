@@ -62,6 +62,21 @@
 	dialog {
 		border-radius: 2.5vw;
 		background-color: lightgoldenrodyellow;
+		transition: 0.35s;
+	}
+
+	dialog[open] {
+		transform: scale(1);
+	}
+
+	@starting-style {
+		dialog[open] {
+			transform: scale(0);
+		}
+	}
+
+	dialog::backdrop {
+		background-color: rgba(0, 0, 0, 0.3);
 	}
 
 	.dialogContainer {
