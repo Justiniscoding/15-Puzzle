@@ -639,6 +639,7 @@
 		let timeTaken = finishedTime - startTime;
 
 		if (localStorage.pb && timeTaken < localStorage.pb) {
+			pbManager.newPB(localStorage.pb, timeTaken);
 			localStorage.pb = timeTaken;
 		}
 	}

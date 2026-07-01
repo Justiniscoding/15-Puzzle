@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { slide, fly, fade } from "svelte/transition";
 
 	let { oldTime, newTime, onFinished, index } = $props();
+
+	let visible = $state(true);
 
 	const animationTime = 8000;
 
@@ -23,8 +26,8 @@
 		}
 
 		if (progressAmount < 0) {
-			onFinished(index);
 			cancelAnimationFrame(frame);
+			hideElement();
 		}
 
 		lastFrame = Date.now();
@@ -34,20 +37,32 @@
 	function formatNumber(msNumber: number) {
 		return (msNumber / 1000).toFixed(3);
 	}
+
+	function hideElement() {
+		visible = false;
+		setTimeout(() => onFinished(index), 500);
+	}
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="container" onclick={() => onFinished(index)}>
-	<h1>New PB!</h1>
-	<p>
-		<span class="red">{formatNumber(oldTime)}s</span>
-		→
-		<span class="green">{formatNumber(newTime)}s</span>
-	</p>
-	<p>{formatNumber(oldTime - newTime)}s faster</p>
-	<progress value={progressAmount} max={animationTime}></progress>
-</div>
+{#if visible}
+	<div
+		class="container"
+		onclick={hideElement}
+		in:slide
+		out:fly={{ duration: 500, y: -300 }}
+	>
+		<h1>New PB!</h1>
+		<p>
+			<span class="red">{formatNumber(oldTime)}s</span>
+			→
+			<span class="green">{formatNumber(newTime)}s</span>
+		</p>
+		<p>{formatNumber(oldTime - newTime)}s faster</p>
+		<progress value={progressAmount} max={animationTime}></progress>
+	</div>
+{/if}
 
 <style>
 	.container {
