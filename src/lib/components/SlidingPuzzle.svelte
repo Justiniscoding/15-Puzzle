@@ -667,15 +667,18 @@
 <!-- <button onclick={solve}>Solve</button> -->
 <!-- <button onclick={algorithmicSolve}>Algorithmic Solve (not optimal)</button> -->
 <!-- <button onclick={testSpeed}>Performance test</button> -->
-<button onclick={resetGame}>Restart</button>
-
-<label for="tilesPerRow">Tiles Per Row</label>
-<input
-	type="number"
-	id="tilesPerRow"
-	bind:value={tilesPerRow}
-	onchange={(e) => console.log(e)}
-/>
+<div class="bottomContainer">
+	<div class="puzzleSizeContainer">
+		<label for="tilesPerRow">Puzzle Size</label>
+		<input
+			type="number"
+			id="tilesPerRow"
+			bind:value={tilesPerRow}
+			onchange={(e) => console.log(e)}
+		/>
+	</div>
+	<button onclick={resetGame}>Restart</button>
+</div>
 
 <PBManager bind:this={pbManager}></PBManager>
 
@@ -693,5 +696,35 @@
 		font-size: 2vh;
 		background-color: #1e90ff;
 		cursor: pointer;
+	}
+
+	label {
+		font-size: min(3vw, 3vh);
+		font-family: Arial, Helvetica, sans-serif;
+	}
+
+	input {
+		width: min(4vw, 4vh);
+		font-size: min(3vw, 3vh);
+		border: 2px solid black;
+		border-radius: 0.5vw;
+	}
+
+	.bottomContainer {
+		margin-top: min(3vw, 3vh);
+		display: flex;
+		justify-content: space-evenly;
+		align-items: center;
+		width: 90vw;
+	}
+
+	.bottomContainer > button {
+		margin: 0;
+	}
+
+	.puzzleSizeContainer {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 </style>
