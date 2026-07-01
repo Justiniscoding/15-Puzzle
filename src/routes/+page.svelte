@@ -59,19 +59,24 @@
 		padding: 0;
 	}
 
+	dialog {
+		border-radius: 2.5vw;
+		background-color: lightgoldenrodyellow;
+	}
+
 	.dialogContainer {
-		width: 70vw;
+		width: min(70vw, 70vh);
 		display: flex;
 		align-items: center;
 		flex-direction: column;
 	}
 
 	.dialogContainer > h1 {
-		font-size: 5vw;
+		font-size: min(5vw, 5vh);
 	}
 
 	.dialogContainer > p {
-		font-size: 3vw;
+		font-size: min(3vw, 3vh);
 		text-align: left;
 	}
 
