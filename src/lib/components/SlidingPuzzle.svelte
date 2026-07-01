@@ -2,6 +2,8 @@
 	import { onMount } from "svelte";
 	import PBManager from "./PBManager.svelte";
 
+	let { numTiles = $bindable(15) } = $props();
+
 	let canvas: HTMLCanvasElement;
 	let context: CanvasRenderingContext2D;
 	let pbManager: PBManager;
@@ -10,7 +12,8 @@
 
 	let tilesPerRow = $state(4);
 
-	let numTiles: number, blankTileX: number, blankTileY: number;
+	// let numTiles: number, blankTileX: number, blankTileY: number;
+	let blankTileY: number, blankTileX: number;
 
 	let movesDone = $state(0);
 

@@ -4,6 +4,8 @@
 
 	let dialogElement: HTMLDialogElement;
 
+	let numTiles: number = $state(15);
+
 	function closeModal() {
 		dialogElement.close();
 	}
@@ -18,8 +20,8 @@
 </script>
 
 <div class="container">
-	<h1>15 Puzzle</h1>
-	<SlidingPuzzle />
+	<h1>{numTiles - 1} Puzzle</h1>
+	<SlidingPuzzle bind:numTiles />
 </div>
 
 <button id="questionMark" onclick={() => dialogElement.showModal()}>?</button>
