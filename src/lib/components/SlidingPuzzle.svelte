@@ -8,13 +8,13 @@
 
 	let tileSize: number;
 
-	let tilesPerRow = 4;
+	let tilesPerRow = $state(4);
 
 	let numTiles: number, blankTileX: number, blankTileY: number;
 
 	let movesDone = $state(0);
 
-	let gameGrid: number[];
+	let gameGrid: number[] = [];
 
 	const imagePath = "";
 	let imageSize: number;
@@ -30,35 +30,33 @@
 		y: number;
 	};
 
-	function initializeGrid() {
-		numTiles = Math.pow(tilesPerRow, 2);
-
-		blankTileX = tilesPerRow - 1;
-		blankTileY = tilesPerRow - 1;
-
-		movesDone = 0;
-
-		if (gameGrid) {
-			gameGrid.length = 0;
-		}
-
-		gameGrid = new Array(numTiles).fill(null).map((_, index) => {
-			if (index == numTiles - 1) {
-				return -1;
-			}
-			return index + 1;
-		});
-
-		tileSize = canvas.width / tilesPerRow;
-	}
-
 	onMount(() => {
 		context = canvas.getContext("2d") ?? new CanvasRenderingContext2D();
 
 		canvas.width = (innerHeight / 3) * 2.1;
 		canvas.height = (innerHeight / 3) * 2.1 + 70;
 
-		initializeGrid();
+		$effect(() => {
+			numTiles = Math.pow(tilesPerRow, 2);
+
+			blankTileX = tilesPerRow - 1;
+			blankTileY = tilesPerRow - 1;
+
+			movesDone = 0;
+
+			if (gameGrid) {
+				gameGrid.length = 0;
+			}
+
+			gameGrid = new Array(numTiles).fill(null).map((_, index) => {
+				if (index == numTiles - 1) {
+					return -1;
+				}
+				return index + 1;
+			});
+
+			tileSize = canvas.width / tilesPerRow;
+		});
 
 		window.addEventListener("keydown", swapTilesWithKeyboard);
 
@@ -648,6 +646,10 @@
 	}
 
 	function playerSolvedPuzzle() {
+		if (tilesPerRow != 4) {
+			return;
+		}
+
 		finishedTime = Date.now();
 
 		let timeTaken = finishedTime - startTime;
@@ -666,6 +668,14 @@
 <!-- <button onclick={algorithmicSolve}>Algorithmic Solve (not optimal)</button> -->
 <!-- <button onclick={testSpeed}>Performance test</button> -->
 <button onclick={resetGame}>Restart</button>
+
+<label for="tilesPerRow">Tiles Per Row</label>
+<input
+	type="number"
+	id="tilesPerRow"
+	bind:value={tilesPerRow}
+	onchange={(e) => console.log(e)}
+/>
 
 <PBManager bind:this={pbManager}></PBManager>
 
