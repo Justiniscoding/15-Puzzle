@@ -56,11 +56,11 @@
 			});
 
 			tileSize = canvas.width / tilesPerRow;
+
+			shuffleGrid();
 		});
 
 		window.addEventListener("keydown", swapTilesWithKeyboard);
-
-		shuffleGrid();
 
 		if (imagePath === "") {
 			loop();
