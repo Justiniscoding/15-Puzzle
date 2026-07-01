@@ -22,6 +22,8 @@
 	<SlidingPuzzle />
 </div>
 
+<button id="questionMark" onclick={() => dialogElement.showModal()}>?</button>
+
 <dialog bind:this={dialogElement} id="tutorial">
 	<div class="dialogContainer">
 		<h1>Tutorial</h1>
@@ -71,5 +73,19 @@
 	.dialogContainer > p {
 		font-size: 3vw;
 		text-align: left;
+	}
+
+	#questionMark {
+		border-radius: 50%;
+		background: none;
+		position: absolute;
+		margin: 0;
+		top: 1vw;
+		right: 1vw;
+		padding: 0;
+		text-align: center;
+		width: 3vw;
+		height: 3vw;
+		font-size: 2vw;
 	}
 </style>

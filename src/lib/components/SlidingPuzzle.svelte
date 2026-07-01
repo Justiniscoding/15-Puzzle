@@ -605,7 +605,6 @@
 	}
 
 	function resetGame() {
-		pbManager.newPB(31320, 25469);
 		shuffleGrid();
 		movesDone = 0;
 		startTime = -1;
