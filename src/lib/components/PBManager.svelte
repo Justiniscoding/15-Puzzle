@@ -4,46 +4,34 @@
 
 	let container: HTMLDivElement;
 
-	let notifiers: PBNotifier[] = [];
+	let notifiers: Map<number, PBNotifier> = new Map();
+
+	let nextMapIndex = 0;
 
 	export function newPB(oldTime: number, newTime: number) {
-		notifiers.push(
+		notifiers.set(
+			nextMapIndex,
 			mount(PBNotifier, {
 				target: container,
-				props: { oldTime, newTime, onFinished: destroyPB },
+				props: {
+					oldTime,
+					newTime,
+					onFinished: destroyPB,
+					index: nextMapIndex++,
+				},
 			}),
 		);
 	}
 
-	function destroyPB(pb: PBNotifier) {
-		notifiers.splice(
-			notifiers.findIndex((el) => el == pb),
-			1,
-		);
-		unmount(pb);
+	function destroyPB(mapIndex: number) {
+		unmount(notifiers.get(mapIndex)!);
+		notifiers.delete(mapIndex);
 	}
 </script>
 
-<div class="container" bind:this={container}>
-	{#if false}
-		<!-- I'm sorry for trolling you svelte :( -->
-		<div></div>
-	{/if}
-</div>
+<div class="container" bind:this={container}></div>
+
+<!-- <PBNotifier oldTime={3} newTime={2} onFinished={() => true}></PBNotifier> -->
 
 <style>
-	.container {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		width: 100vw;
-		height: 100vh;
-	}
-
-	.container > * {
-		position: absolute;
-		bottom: 5vh;
-		left: 50vw;
-		transform: translate(-50%, 50%);
-	}
 </style>

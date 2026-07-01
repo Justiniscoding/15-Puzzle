@@ -42,6 +42,8 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		margin: 0;
+		padding: 0;
 	}
 
 	h1 {
@@ -51,6 +53,8 @@
 
 	:global(html, body) {
 		background-color: #aaa;
+		margin: 0;
+		padding: 0;
 	}
 
 	.dialogContainer {
