@@ -3,6 +3,7 @@
 
 	let canvas: HTMLCanvasElement;
 	let context: CanvasRenderingContext2D;
+	let dialogElement: HTMLDialogElement;
 
 	let tileSize: number;
 
@@ -36,10 +37,16 @@
 	};
 
 	onMount(() => {
+		if (!localStorage.hasSeenTutorial) {
+			// localStorage.hasSeenTutorial = true;
+
+			dialogElement.showModal();
+		}
+
 		context = canvas.getContext("2d") ?? new CanvasRenderingContext2D();
 
-		canvas.width = Math.min(innerWidth, innerHeight) - 200;
-		canvas.height = Math.min(innerWidth, innerHeight) - 200 + 70;
+		canvas.width = (innerHeight / 3) * 2.1;
+		canvas.height = (innerHeight / 3) * 2.1 + 70;
 
 		tileSize = canvas.width / tilesPerRow;
 
@@ -639,6 +646,17 @@
 <!-- <button onclick={testSpeed}>Performance test</button> -->
 <button onclick={resetGame}>Restart</button>
 
+<dialog bind:this={dialogElement}>
+	<h1>Tutorial</h1>
+	<p>
+		The 15 puzzle is a sliding puzzle where you have to get numbers from
+		1-15 in order in a 4x4 grid. This is done by sliding a tile that is
+		directly adjacent to the balnk position into its place. A timer starts
+		after you make your first move, and the amount of moves you make per
+		second is kept track of as well.
+	</p>
+</dialog>
+
 <style>
 	canvas {
 		border: 5px solid black;
@@ -650,8 +668,20 @@
 		border: 2px solid black;
 		border-radius: 0.5vw;
 		margin-top: 2vh;
-		font-size: 2vw;
+		font-size: 2vh;
 		background-color: #1e90ff;
 		cursor: pointer;
+	}
+
+	dialog {
+		width: 70vw;
+		/* height: 50vh; */
+	}
+
+	dialog > h1 {
+		font-size: 5vw;
+	}
+
+	dialog > p {
 	}
 </style>
