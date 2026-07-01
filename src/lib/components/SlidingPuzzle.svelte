@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import PBManager from "./PBManager.svelte";
 
 	let canvas: HTMLCanvasElement;
 	let context: CanvasRenderingContext2D;
-	let dialogElement: HTMLDialogElement;
+	let pbManager: PBManager;
 
 	let tileSize: number;
 
@@ -201,7 +202,7 @@
 				movesDone++;
 
 				if (isSolved(gameGrid)) {
-					finishedTime = Date.now();
+					playerSolvedPuzzle();
 				}
 
 				return;
@@ -244,7 +245,7 @@
 			swapTileWithBlank(tileX, tileY);
 
 			if (isSolved(gameGrid)) {
-				finishedTime = Date.now();
+				playerSolvedPuzzle();
 			}
 		}
 	}
@@ -604,6 +605,7 @@
 	}
 
 	function resetGame() {
+		pbManager.newPB(31320, 25469);
 		shuffleGrid();
 		movesDone = 0;
 		startTime = -1;
@@ -630,6 +632,16 @@
 
 		console.log(`It took ${secondsTaken}:${millisecondsTaken} seconds`);
 	}
+
+	function playerSolvedPuzzle() {
+		finishedTime = Date.now();
+
+		let timeTaken = finishedTime - startTime;
+
+		if (localStorage.pb && timeTaken < localStorage.pb) {
+			localStorage.pb = timeTaken;
+		}
+	}
 </script>
 
 <canvas bind:this={canvas} onclick={swapTilesOnClick}></canvas>
@@ -639,6 +651,8 @@
 <!-- <button onclick={algorithmicSolve}>Algorithmic Solve (not optimal)</button> -->
 <!-- <button onclick={testSpeed}>Performance test</button> -->
 <button onclick={resetGame}>Restart</button>
+
+<PBManager bind:this={pbManager}></PBManager>
 
 <style>
 	canvas {
