@@ -4,7 +4,7 @@
 
 	let dialogElement: HTMLDialogElement;
 
-	let numTiles: number = $state(15);
+	let numTiles: number = $state(16);
 
 	function closeModal() {
 		dialogElement.close();
