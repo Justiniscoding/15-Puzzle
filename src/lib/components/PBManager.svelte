@@ -8,7 +8,11 @@
 
 	let nextMapIndex = 0;
 
-	export function newPB(oldTime: number, newTime: number) {
+	export function newPB(
+		oldTime: number,
+		newTime: number,
+		puzzleSize: number,
+	) {
 		notifiers.set(
 			nextMapIndex,
 			mount(PBNotifier, {
@@ -16,6 +20,7 @@
 				props: {
 					oldTime,
 					newTime,
+					puzzleSize,
 					onFinished: destroyPB,
 					index: nextMapIndex++,
 				},

@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import { slide, fly, fade } from "svelte/transition";
 
-	let { oldTime, newTime, onFinished, index } = $props();
+	let { oldTime, newTime, onFinished, index, puzzleSize } = $props();
 
 	let visible = $state(false);
 
@@ -29,6 +29,7 @@
 		if (progressAmount < 0) {
 			cancelAnimationFrame(frame);
 			hideElement();
+			return;
 		}
 
 		lastFrame = Date.now();
@@ -54,7 +55,7 @@
 		in:slide
 		out:fly={{ duration: 500, y: -300 }}
 	>
-		<h1>New PB!</h1>
+		<h1>New {puzzleSize} Puzzle PB!</h1>
 		<p>
 			<span class="red">{formatNumber(oldTime)}s</span>
 			→

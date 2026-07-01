@@ -646,17 +646,24 @@
 	}
 
 	function playerSolvedPuzzle() {
-		if (tilesPerRow != 4) {
-			return;
-		}
-
 		finishedTime = Date.now();
 
-		let timeTaken = finishedTime - startTime;
+		const timeTaken = finishedTime - startTime;
+		const localStorageKey = `${numTiles - 1}_puzzle_pb`;
 
-		if (localStorage.pb && timeTaken < localStorage.pb) {
-			pbManager.newPB(localStorage.pb, timeTaken);
-			localStorage.pb = timeTaken;
+		if (
+			localStorage[localStorageKey] &&
+			timeTaken < localStorage[localStorageKey]
+		) {
+			pbManager.newPB(
+				localStorage[localStorageKey],
+				timeTaken,
+				numTiles - 1,
+			);
+			localStorage[localStorageKey] = timeTaken;
+		}
+		if (!localStorage[localStorageKey]) {
+			localStorage[localStorageKey] = timeTaken;
 		}
 	}
 </script>
@@ -670,12 +677,7 @@
 <div class="bottomContainer">
 	<div class="puzzleSizeContainer">
 		<label for="tilesPerRow">Puzzle Size</label>
-		<input
-			type="number"
-			id="tilesPerRow"
-			bind:value={tilesPerRow}
-			onchange={(e) => console.log(e)}
-		/>
+		<input type="number" id="tilesPerRow" bind:value={tilesPerRow} />
 	</div>
 	<button onclick={resetGame}>Restart</button>
 </div>
