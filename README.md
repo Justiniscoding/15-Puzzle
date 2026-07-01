@@ -1,42 +1,14 @@
-# sv
+# 15 Puzzle
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+The 15 puzzle is a sliding puzzle where your goal is to get tiles numbered from 1-15 in order. This is done by sliding a tile directly adjacent to the blank tile into its place. This allows for full scrambling and solving of the puzzle.
 
-## Creating a project
+Features:
+- A timer that tracks the amount of time it takes you to solve as well as your total moves and MPS (moves per second)
+- Adjustable puzzle sizes (from 2x2 to 20x20)
+- Tutorial/explanation that shows on the user's first time visiting the website
+- A random move shuffling/scrambling algorithm that does more moves for larger puzzles
+- An optimal solving algorithm using a breadth-first search (will use MITM in the future for better performance)
+- An algorithmic solver that solves the puzzle in a similar way to a human (WIP, is able to do all rows except for the last two) 
+- A personal best tracking system that keeps track of your best solve time for all the puzzle sizes
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-pnpm dlx sv@0.15.3 create --template minimal --types ts --install pnpm 15-puzzle
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Play the game [here](https://sliding-puzzle-game-lime.vercel.app/)!
