@@ -37,6 +37,8 @@
 		canvas.height = (innerHeight / 3) * 2.1 + 70;
 
 		$effect(() => {
+			tilesPerRow = Math.min(Math.max(tilesPerRow, 2), 20);
+
 			numTiles = Math.pow(tilesPerRow, 2);
 
 			blankTileX = tilesPerRow - 1;
@@ -670,14 +672,19 @@
 
 <canvas bind:this={canvas} onclick={swapTilesOnClick}></canvas>
 
-<!-- <h2>Moves: {movesDone}</h2> -->
 <!-- <button onclick={solve}>Solve</button> -->
 <!-- <button onclick={algorithmicSolve}>Algorithmic Solve (not optimal)</button> -->
 <!-- <button onclick={testSpeed}>Performance test</button> -->
 <div class="bottomContainer">
 	<div class="puzzleSizeContainer">
 		<label for="tilesPerRow">Puzzle Size</label>
-		<input type="number" id="tilesPerRow" bind:value={tilesPerRow} />
+		<input
+			type="number"
+			id="tilesPerRow"
+			min="2"
+			max="20"
+			bind:value={tilesPerRow}
+		/>
 	</div>
 	<button onclick={resetGame}>Restart</button>
 </div>
