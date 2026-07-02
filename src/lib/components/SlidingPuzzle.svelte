@@ -462,7 +462,7 @@
 					movesDone++;
 				}
 
-				// await new Promise((resolve) => setTimeout(resolve, 300));
+				await new Promise((resolve) => setTimeout(resolve, 300));
 			}
 
 			// Swap target with blank if it brings the target closer to its home position
@@ -484,7 +484,7 @@
 				targetCurrentPosition.x = oldBlankX;
 				targetCurrentPosition.y = oldBlankY;
 
-				// await new Promise((resolve) => setTimeout(resolve, 1000));
+				await new Promise((resolve) => setTimeout(resolve, 1000));
 			}
 
 			// Bring the target to its position
@@ -503,13 +503,13 @@
 						if (!isXAligned && i == 0) {
 							// Add new moves to set up for the swapping.
 							swapTileWithBlank(blankTileX, blankTileY + 1);
-							// await new Promise((resolve) =>
-							// 	setTimeout(resolve, 300),
-							// );
+							await new Promise((resolve) =>
+								setTimeout(resolve, 300),
+							);
 							swapTileWithBlank(blankTileX + 1, blankTileY);
-							// await new Promise((resolve) =>
-							// 	setTimeout(resolve, 300),
-							// );
+							await new Promise((resolve) =>
+								setTimeout(resolve, 300),
+							);
 						}
 
 						swapTileWithBlank(
@@ -518,9 +518,9 @@
 						);
 
 						movesDone++;
-						// await new Promise((resolve) =>
-						// 	setTimeout(resolve, 100),
-						// );
+						await new Promise((resolve) =>
+							setTimeout(resolve, 100),
+						);
 					}
 
 					targetCurrentPosition.x++;
@@ -549,9 +549,9 @@
 						);
 						movesDone++;
 
-						// await new Promise((resolve) =>
-						// 	setTimeout(resolve, 100),
-						// );
+						await new Promise((resolve) =>
+							setTimeout(resolve, 100),
+						);
 					}
 
 					targetCurrentPosition.y--;
@@ -566,13 +566,13 @@
 						if (!isXAligned && i == 0) {
 							// Add new moves to set up for the swapping.
 							swapTileWithBlank(blankTileX, blankTileY + 1);
-							// await new Promise((resolve) =>
-							// 	setTimeout(resolve, 300),
-							// );
+							await new Promise((resolve) =>
+								setTimeout(resolve, 300),
+							);
 							swapTileWithBlank(blankTileX - 1, blankTileY);
-							// await new Promise((resolve) =>
-							// 	setTimeout(resolve, 300),
-							// );
+							await new Promise((resolve) =>
+								setTimeout(resolve, 300),
+							);
 						}
 
 						swapTileWithBlank(
@@ -581,9 +581,9 @@
 						);
 						movesDone++;
 
-						// await new Promise((resolve) =>
-						// 	setTimeout(resolve, 100),
-						// );
+						await new Promise((resolve) =>
+							setTimeout(resolve, 100),
+						);
 					}
 
 					targetCurrentPosition.x--;
@@ -601,7 +601,7 @@
 					);
 					movesDone++;
 
-					// await new Promise((resolve) => setTimeout(resolve, 100));
+					await new Promise((resolve) => setTimeout(resolve, 100));
 				}
 			}
 		}
