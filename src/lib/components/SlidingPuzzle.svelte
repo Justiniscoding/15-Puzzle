@@ -670,12 +670,20 @@
 			localStorage[localStorageKey] = timeTaken;
 		}
 	}
+
+	function showSolveWarning() {
+		if (
+			confirm(
+				"The solve tool may cause the tab to be unresponsive and use large amounts of memory. It is not recommended for puzzles above a size of 4x4. Are you sure you want to use it?",
+			)
+		) {
+			solve();
+		}
+	}
 </script>
 
 <canvas bind:this={canvas} onclick={swapTilesOnClick}></canvas>
 
-<!-- <button onclick={solve}>Solve</button> -->
-<!-- <button onclick={algorithmicSolve}>Algorithmic Solve (not optimal)</button> -->
 <!-- <button onclick={testSpeed}>Performance test</button> -->
 <div class="bottomContainer">
 	<div class="puzzleSizeContainer">
@@ -689,6 +697,8 @@
 		/>
 	</div>
 	<button onclick={resetGame}>Restart</button>
+	<button onclick={showSolveWarning}>Solve</button>
+	<button onclick={algorithmicSolve}>Algorithmic Solve (wip)</button>
 </div>
 
 <PBManager bind:this={pbManager}></PBManager>
